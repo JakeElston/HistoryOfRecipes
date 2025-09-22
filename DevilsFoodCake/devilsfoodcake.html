@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devil's Food Cake'</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" style="color: white;"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#essays-recipes">Essays & Recipes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#sources">Sources</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact Us</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <script>
+        function changetab(ct) {
+            var page;
+            var iframe = document.getElementById("body")
+            if (ct == 'E') {
+                page = "devilsfoodcakerecipe.html";
+                document.getElementById('RecipeButton').style.backgroundColor = 'var(--primary-brown)';
+                document.getElementById('RecipeButton').style.color = '#ffffff';
+                document.getElementById('EssayButton').style.backgroundColor = 'var(--light-cream)';
+                document.getElementById('EssayButton').style.color = '#6b4e3d';
+            } else if (ct == 'R') {
+                page = "devilsfoodcakeessay.html";
+                document.getElementById('EssayButton').style.backgroundColor = 'var(--primary-brown)';
+                document.getElementById('EssayButton').style.color = '#ffffff';
+                document.getElementById('RecipeButton').style.backgroundColor = 'var(--light-cream)';
+                document.getElementById('RecipeButton').style.color = '#6b4e3d';
+            }
+            document.getElementById('body').src = page;
+        }
+    </script>
+    <h1 style="justify-self:center; margin-top:20px">Devil's Food Cake</h1>
+    <p style="margin-top:10px; justify-self:center">
+        <button id="EssayButton" type="button"
+                onclick="changetab('R')"
+                style="color:var(--light-cream); background-color:var(--primary-brown)">
+            Essay
+        </button>
+        <button id="RecipeButton" type="button"
+                onclick="changetab('E')">
+            Recipe
+        </button>
+    </p>
+
+    <iframe id="body" src="devilsfoodcakeessay.html"
+            style="margin-left:100px; margin-right:100px; width:stretch; height:500px">
+    </iframe>
+</body>
+</html>
