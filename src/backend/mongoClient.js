@@ -6,7 +6,7 @@ let client;
 let db;
 
 async function connectToDatabase() {
-  if (db) return db; // reuse existing connection if available
+  //if (db) return db; // reuse existing connection if available
 
   try {
     client = new MongoClient(process.env.MONGO_URI, {
@@ -18,7 +18,7 @@ async function connectToDatabase() {
     });
 
     await client.connect();
-    db = client.db('RecipieHistory'); // <-- your database name
+    db = client.db('RecipieHistory'); 
     console.log('Connected to MongoDB');
     return db;
   } catch (err) {
