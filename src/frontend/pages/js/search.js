@@ -6,7 +6,7 @@ let allRecipes = [];
 // Fetch recipes from backend
 async function loadRecipes() {
     try {
-        const res = await fetch('http://localhost:3000/essays');
+        const res = await fetch('http://localhost:5000/essays');
         allRecipes = await res.json();
         renderRecipes(allRecipes);
     } catch (err) {
