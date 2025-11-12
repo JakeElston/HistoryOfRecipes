@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acarajé</title>
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
@@ -12,10 +11,10 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
                     <li class="nav-item"><a class="nav-link active" href="#essays-recipes">Essays & Recipes</a></li>
@@ -27,32 +26,57 @@
         </div>
     </nav>
 
-    <h1 style="text-align:center; margin-top:20px;">Acarajé</h1>
-    <p style="text-align:center; margin-top:10px;">
-        <button id="EssayButton" type="button" onclick="changetab('R')" style="color:#fff; background-color:var(--primary-brown);">Essay</button>
-        <button id="RecipeButton" type="button" onclick="changetab('E')">Recipe</button>
-    </p>
+    <h1 class="text-center mt-4">Acarajé: Brazilian Bean Fritters</h1>
+    <p class="text-center font-italic" style="margin-top: 5px;">By Nora Davidson</p>
+    
+    <div class="d-flex justify-content-center my-3">
+        <div class="btn-group" role="group" aria-label="Essay and Recipe Toggle">
+            <button id="EssayButton" type="button" onclick="changetab('R')" class="btn" style="color:#fff; background-color:var(--primary-brown);">Essay</button>
+            <button id="RecipeButton" type="button" onclick="changetab('E')" class="btn">Recipe</button>
+        </div>
+    </div>
 
     <iframe id="body" src="acarajeessay.html" style="margin:0 100px; width:calc(100% - 200px); height:700px;"></iframe>
 
     <script>
         function changetab(ct) {
             var page;
+            
+            // Define default button styles for consistency
+            const activeBg = 'var(--primary-brown)';
+            const activeColor = '#fff';
+            const inactiveBg = 'var(--light-cream)'; // Assuming these variables are defined in styles.css
+            const inactiveColor = 'var(--secondary-brown)';
+
+            // Reset both buttons to a consistent inactive state first (optional but clean)
+            document.getElementById('EssayButton').style.backgroundColor = inactiveBg;
+            document.getElementById('EssayButton').style.color = inactiveColor;
+            document.getElementById('RecipeButton').style.backgroundColor = inactiveBg;
+            document.getElementById('RecipeButton').style.color = inactiveColor;
+
+
             if(ct=='E') {
                 page = "acarajerecipe.html";
-                document.getElementById('RecipeButton').style.backgroundColor = 'var(--primary-brown)';
-                document.getElementById('RecipeButton').style.color = '#fff';
-                document.getElementById('EssayButton').style.backgroundColor = 'var(--light-cream)';
-                document.getElementById('EssayButton').style.color = 'var(--secondary-brown)';
-            } else {
+                // Activate Recipe button
+                document.getElementById('RecipeButton').style.backgroundColor = activeBg;
+                document.getElementById('RecipeButton').style.color = activeColor;
+            } else { // ct=='R' for Essay
                 page = "acarajeessay.html";
-                document.getElementById('EssayButton').style.backgroundColor = 'var(--primary-brown)';
-                document.getElementById('EssayButton').style.color = '#fff';
-                document.getElementById('RecipeButton').style.backgroundColor = 'var(--light-cream)';
-                document.getElementById('RecipeButton').style.color = 'var(--secondary-brown)';
+                // Activate Essay button
+                document.getElementById('EssayButton').style.backgroundColor = activeBg;
+                document.getElementById('EssayButton').style.color = activeColor;
             }
             document.getElementById('body').src = page;
         }
+        
+        // Initial setup to ensure the Essay button is active on page load, matching the iframe src
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('EssayButton').style.backgroundColor = 'var(--primary-brown)';
+            document.getElementById('EssayButton').style.color = '#fff';
+            // The Recipe button will default to the inactive style based on its initial state in the HTML
+        });
     </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

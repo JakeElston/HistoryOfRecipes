@@ -1,41 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acarajé Recipe</title>
-    <link rel="stylesheet" href="../styles.css">
-    <link rel="stylesheet" href="../recipestyles.css">
+    <!-- Use inline CSS for iframe content -->
+    <style>
+        :root {
+            --primary-brown: #6b4e3d;
+            --text-color: #333;
+            --light-cream: #f7f3e8;
+        }
+        body {
+            font-family: "Inter", sans-serif;
+            color: var(--text-color);
+            line-height: 1.75;
+            padding: 2rem;
+            background-color: var(--light-cream);
+        }
+        .recipe-content h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-brown);
+            border-bottom: 1px solid rgba(107, 78, 61, 0.3);
+            padding-bottom: 3px;
+        }
+        .recipe-content ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 0.5rem;
+        }
+        .recipe-content li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        /* Custom bullet point for lists */
+        .recipe-content li::before {
+            content: '•';
+            color: var(--primary-brown);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        .recipe-content .recipe-paragraph {
+            margin-bottom: 1rem;
+            text-indent: 1.5rem;
+            text-align: justify;
+            padding-left: 0;
+        }
+        .recipe-meta-data {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed #ccc;
+        }
+    </style>
 </head>
 <body>
-    <p>
-        <strong>Serves:</strong> 20<br>
-        <strong>Time:</strong> 30 minutes
-    </p>
+    <div id="recipe-content" class="recipe-content">
+        <p>Loading recipe...</p>
+    </div>
 
-    <p>
-        <strong>Ingredients:</strong><br>
-        2 cups black-eyed or field peas<br>
-        1 tsp Kosher salt<br>
-        ½ tsp black pepper<br>
-        1 medium onion, chopped<br>
-        20 pieces dried shrimp<br>
-        Vegetable oil (or dendê oil, or a 50/50 mix) for deep-frying
-    </p>
+    <script>
+        const TARGET_CONTENT_NAME = 'Acarajé';
+        const API_BASE_URL = 'http://localhost:5000';
+        const contentContainer = document.getElementById('recipe-content');
 
-    <p>
-        <strong>Directions:</strong><br>
-        1. Soak the peas overnight in water. Rub them at the end of the soaking period to remove their skins. Skim off floating skins and discard. You may need to drain, re-cover with water, and rub again.<br>
-        2. Soak the shrimp for 30 minutes, then drain.<br>
-        3. Puree the beans, shrimp, and chopped onion in a food processor.<br>
-        4. Add salt and pepper, then whip some air into the mixture with a spoon.<br>
-        5. Form the mixture into 20 small balls, or press a dried shrimp partly into the center of each ball so it remains visible.<br>
-        6. Heat oil in a sauté pan over medium heat. Fry the balls in small batches for about 3 minutes per side, until golden brown all over.<br>
-        7. Drain the oil and keep the fritters warm. Serve hot as a first course or snack.
-    </p>
+        function renderRecipeContent(recipeText) {
+            const sections = recipeText.split(/\n\n+/).filter(s => s.trim() !== '');
+            let html = '';
+            
+            sections.forEach(section => {
+                const lines = section.split('\n').map(line => line.trim()).filter(line => line !== '');
+                
+                if (lines.length === 0) return;
 
-    <p>
-        <strong>Nutritional Information (per ball):</strong><br>
-        52.9 calories; 2.5 g protein; 2.9 g total fat (0.4 g saturated; 0.3 g polyunsaturated; 2.0 g monounsaturated); 4.5 g carbohydrates (1.8 g fiber; 0 g sugars); 14.4 mg cholesterol; 261.2 mg sodium
-    </p>
+                const firstLine = lines[0].toLowerCase();
+                
+                // Keywords that signal a structured list section
+                const isHeaderList = firstLine.startsWith('ingredients') || 
+                                     firstLine.startsWith('directions') || 
+                                     firstLine.startsWith('serves:') ||
+                                     firstLine.startsWith('time:') ||
+                                     firstLine.endsWith(':');
+
+                // Check for single line meta data that shouldn't be a list
+                const isMetaData = firstLine.startsWith('serves:') || firstLine.startsWith('time:');
+
+                if (isMetaData) {
+                    html += `<p class="recipe-meta-data">${lines.join('<br>')}</p>`;
+                } else if (isHeaderList) {
+                    // Use the first line as the header
+                    let headerText = lines[0].replace(/:$/, '').trim();
+                    html += `<h4>${headerText}</h4>`;
+                    
+                    // If there's more than just the header, treat the rest as list items
+                    if (lines.length > 1) {
+                         html += `<ul>`;
+                         for (let i = 1; i < lines.length; i++) {
+                             html += `<li>${lines[i]}</li>`;
+                         }
+                         html += `</ul>`;
+                    }
+                }
+                else {
+                    // General paragraph/note
+                    html += `<p class="recipe-paragraph">${lines.join(' ')}</p>`;
+                }
+            });
+
+            contentContainer.innerHTML = html;
+        }
+
+        // Fetch ALL recipes from the general endpoint
+        fetch(`${API_BASE_URL}/essays`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Server error when fetching recipes.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Find the specific item by checking if the name includes the target name (case insensitive)
+                const primaryContent = data.find(item => item.name && item.name.toLowerCase().includes(TARGET_CONTENT_NAME.toLowerCase()));
+                
+                if (primaryContent) {
+                    const recipeText = primaryContent.recipie || primaryContent.recipe || 'No recipe available';
+                    renderRecipeContent(recipeText);
+                } else {
+                    contentContainer.innerHTML = `<p style="color: red;">Error: Could not find content named "${TARGET_CONTENT_NAME}" in the database.</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching recipe:', error);
+                contentContainer.innerHTML = '<p style="color: red;">Error loading recipe. Please check your network and server logs.</p>';
+            });
+    </script>
 </body>
 </html>

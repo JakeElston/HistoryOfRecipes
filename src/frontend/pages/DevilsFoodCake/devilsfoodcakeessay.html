@@ -1,21 +1,82 @@
 ﻿<!DOCTYPE html>
-
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title></title>
-    <link rel="stylesheet" href="../styles.css">
-    <link rel="stylesheet" href="../essaystyles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devil's Food Cake Essay</title>
+    <!-- Use inline CSS for iframe content -->
+    <style>
+        :root {
+            --primary-brown: #6b4e3d;
+            --text-color: #333;
+        }
+        body {
+            font-family: "Inter", sans-serif;
+            color: var(--text-color);
+            line-height: 1.75;
+            padding: 2rem;
+        }
+        .essay-text {
+            margin: 0; 
+        }
+        .essay-text p {
+            margin-bottom: 1rem;
+            text-indent: 1.5rem; /* Standard essay paragraph indent */
+            text-align: justify;
+        }
+        h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-brown);
+        }
+    </style>
 </head>
 <body>
-    <p>
-        I can do no less than offer up my own dearest family recipe: that Chocolate cake. I won’t say it is the world’s best Devil’s Food cake. I am just going to tell you that I love it. If I am what I eat, then at my best I am that cake. My desire to reproduce my grandmother’s cake began with two different receipts for it that I still possess. It took considerable trial and effort using the handwritten versions she gave me in the 1990s for me to learn how to make it with consistency. I learned from that experience that a list of ingredients, while certainly essential to recreating a dish, falls short of having technique or the right tools. When I in herited her cake pans my results improved. As she instructed me in employing an instant read thermometer, moving from boiling the icing until “it looks right” helped a great deal.
-        
-        Devil’s Food cakes are a fine example of food history at work. Their very name — Devil’s Food — stems from two historical contexts. Bakers assigned the name Devil’s Food cakes to dark chocolate cakes, in opposition to the light and white - hued Angel Food cakes. When Devil’s Food cakes came to be in the early twentieth century, this class of cakes took their chocolate flavor and color from cocoa powder. The chemical reaction resulting from mixing baking soda and baking powder (the acids and the alkaline) changes the cake’s color from the brown of cocoa powder and makes it reddish. The lighter, tanner cakes are more acidic, while the deeper, darker cakes are alkaline based. Devil’s food cake, neither tan nor dark, hovers around slightly alkaline. The color red has been associated with the devil since the early days of Christianity and goes back into Judaism. The Book of Isaiah states, “Though your sins be as scarlet, they shall be white as snow,” creating a contrast between purity (white) and sin (red). As the cake takes on a reddish color, so too, does it adopt the name of the devil.
-        
-        Some aspects of this recipe are in keeping with the Devil’s Food class of recipes. The use of hot water or coffee with baking soda, are two diagnostic features, for example. My g randmother, Myrtle Vaughn Tuten, learned to prepare this dish from her mother – in - law, Annie Phillips Tuten, sometime shortly after my grandparents married in 1938. Where Annie learned the recipe is unknown. During the sixty or more years that Myrtle made this cake, she supplied it for birthdays of four generations of her family from her parents to her great - grandchildren. She brought it to dinner – on – the - grounds at Baptist churches and it had pride of place at the annual Tuten family reunion. Among those folks, Myrtle’s Devil’s Food Cake became an iconic dish. Many families can tell parallel stories about a treasured dish and, often, that one family member most associated with it. That pattern too, is history.
-        
-        Besides the cocoa and leavens, the amount of sugar and butter in this cake results in a distinct mouth - feel. It also makes for a cake with a tremendous glycemic load.
-    </p>
+    <div id="essay-content" class="essay-text">
+        <p>Loading essay...</p>
+    </div>
+
+    <script>
+        // Hardcoded ID for Devil's Food Cake
+        const essayId = '68e3f67c6eb7b550d54f7d4e';
+        const API_BASE_URL = 'http://localhost:5000';
+        const contentContainer = document.getElementById('essay-content');
+
+        function renderEssayContent(essayText) {
+            // Split by double newline to detect paragraphs/sections
+            const sections = essayText.split(/\n\n+/).filter(s => s.trim() !== '');
+            let html = '';
+
+            sections.forEach(section => {
+                const lines = section.split('\n').map(line => line.trim()).filter(line => line !== '');
+                
+                if (lines.length === 0) return;
+
+                // Treat all content as a single essay paragraph block per section
+                html += `<p>${lines.join(' ')}</p>`;
+            });
+            
+            contentContainer.innerHTML = html;
+        }
+
+        // Fetch the specific essay by ID
+        fetch(`${API_BASE_URL}/essays/${essayId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Essay not found. Check ID and server path.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Render the essay content
+                renderEssayContent(data.essay || '');
+            })
+            .catch(error => {
+                console.error('Error fetching essay:', error);
+                contentContainer.innerHTML = '<p class="text-red-600">Error loading essay. Please check your network and server logs.</p>';
+            });
+    </script>
 </body>
 </html>

@@ -1,72 +1,143 @@
 ﻿<!DOCTYPE html>
-
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title></title>
-    <link rel="stylesheet" href="../styles.css">
-    <link rel="stylesheet" href="../recipestyles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devil's Food Cake Recipe</title>
+    <!-- Use inline CSS for iframe content -->
+    <style>
+        :root {
+            --primary-brown: #6b4e3d;
+            --text-color: #333;
+            --light-cream: #f7f3e8;
+        }
+        body {
+            font-family: "Inter", sans-serif;
+            color: var(--text-color);
+            line-height: 1.75;
+            padding: 2rem;
+            background-color: var(--light-cream);
+        }
+        .recipe-content h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-brown);
+            border-bottom: 1px solid rgba(107, 78, 61, 0.3);
+            padding-bottom: 3px;
+        }
+        .recipe-content ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 0.5rem;
+        }
+        .recipe-content li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        /* Custom bullet point for lists */
+        .recipe-content li::before {
+            content: '•';
+            color: var(--primary-brown);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        .recipe-content .recipe-paragraph {
+            margin-bottom: 1rem;
+            text-indent: 1.5rem;
+            text-align: justify;
+            padding-left: 0;
+        }
+        .recipe-meta-data {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed #ccc;
+        }
+    </style>
 </head>
 <body>
-    <p>
-        Cake Ingredients:
-        1 lb. dark brown sugar
-        2 sticks of very soft butter (cut into pats to speed up this process)
-        3 eggs
-        ½ cup sour milk (add 1 tspn lemon juice or vinegar to milk)
-        1 tspn vanilla
-        3 cups flour
-        1tspn salt
-        4 tablespoons cocoa powder [have mixed dark and regular 50%-50%].
-        ½  tspn of Baking soda
-        1 cup hot water or coffee
+    <div id="recipe-content" class="recipe-content">
+        <p>Loading recipe...</p>
+    </div>
 
-        Cake Directions:
-        Pre-heat oven to 350°.
+    <script>
+        // Hardcoded ID for Devil's Food Cake
+        const essayId = '68e3f67c6eb7b550d54f7d4e';
+        const API_BASE_URL = 'http://localhost:5000';
+        const contentContainer = document.getElementById('recipe-content');
 
-        Grease three 10 inch cake pans. Myrtle Vaughn Tuten (MVT) used 10.5 inch round pans and Great-Grandmother Tuten used rectangular pans.
+        function renderRecipeContent(recipeText) {
+            // Split the recipe text by double newline to get main sections
+            const sections = recipeText.split(/\n\n+/).filter(s => s.trim() !== '');
+            let html = '';
+            
+            sections.forEach(section => {
+                // Split each section by single newline to find list items or paragraphs
+                const lines = section.split('\n').map(line => line.trim()).filter(line => line !== '');
+                
+                if (lines.length === 0) return;
 
-        Cream together the butter and brown sugar in mixing bowl then add eggs one at a time into the mixture. Add vanilla and sour milk.
+                const firstLine = lines[0].toLowerCase();
+                
+                // Keywords that signal a structured list section
+                const isHeaderList = firstLine.startsWith('ingredients') || 
+                                     firstLine.startsWith('directions') || 
+                                     firstLine.startsWith('cake') ||
+                                     firstLine.startsWith('frosting') ||
+                                     firstLine.endsWith(':');
 
-        In a medium bowl combine cake flour, baking soda and cocoa powder.
+                // Check for single line meta data that shouldn't be a list
+                const isMetaData = firstLine.startsWith('serves:') || firstLine.startsWith('time:');
 
-        Add flour mixture to liquid ingredients until smooth then add 1 cup hot water (or coffee for a mocha quality). Beat again until smooth.
+                if (isMetaData) {
+                    html += `<p class="recipe-meta-data">${lines.join('<br>')}</p>`;
+                } else if (isHeaderList) {
+                    // Use the first line as the header
+                    let headerText = lines[0].replace(/:$/, '').trim();
+                    html += `<h4>${headerText}</h4>`;
+                    
+                    // If there's more than just the header, treat the rest as list items
+                    if (lines.length > 1) {
+                         html += `<ul>`;
+                         for (let i = 1; i < lines.length; i++) {
+                             html += `<li>${lines[i]}</li>`;
+                         }
+                         html += `</ul>`;
+                    }
+                }
+                else {
+                    // General paragraph/note
+                    html += `<p class="recipe-paragraph">${lines.join(' ')}</p>`;
+                }
+            });
 
-        Pour batter in equal amounts into the three pans.
+            contentContainer.innerHTML = html;
+        }
 
-        Bake for 20-25 minutes or until a cake tester (or a toothpick) comes out clean. Rotate your pans once or twice to create even baking.
-
-        Cool cake. Remove from pan.
-
-        If you are using a stand mixer, wash your bowl and paddle then…
-
-        Frosting
-        After the cake goes into the oven begin making the frosting. It takes 20 minutes or more.
-
-        Frosting Ingredients:
-        1 lb. light brown sugar
-        2 sticks of butter
-        ½ pint of heavy whipping cream or “sweet cream”
-        1 tspn of Vanilla
-        1-2 heaping tablespoons of cocoa
-
-        Frosting Directions:
-        Using a heavy saucepan melt and boil brown sugar, cream and butter at medium heat. MVT stirred and cooked it until “thick” as she put it, but your judgment of thick may not be as good as hers was.
-
-        So, I monitor the temperature with a candy thermometer and take it off the heat at 228° or 230°. The mixture will foam up and then thicken.
-
-        Add cocoa and Vanilla.
-
-        Take off heat and beat mixture until smooth.
-
-        Spread frosting on cake as soon as you finish beating it. You may find it easiest to pour it over one layer at a time as you assemble the cake. While it is still fairly warm some will run down the sides.
-
-        You can scoop that and use to spread the frosting along the sides and even add it back to the top.
-
-        The cake reaches peak flavor after it is assembled so allow it six to twelve hours to rest before serving.
-
-
-        *Note that this cake is dense and has a strong tendency to crack. Pray that it does because then you can pack the cracks with more frosting. Cake flour produces fewer cracks. Use any leftover frosting as an ice-cream topping. It will keep in the refrigerator for a week in an airtight container.
-    </p>
+        // Fetch the specific recipe by ID
+        fetch(`${API_BASE_URL}/essays/${essayId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Recipe not found. Check ID and server path.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Render the recipe content (check both 'recipe' and 'recipie' fields)
+                const recipeText = data.recipe || data.recipie || 'No recipe available';
+                renderRecipeContent(recipeText);
+            })
+            .catch(error => {
+                console.error('Error fetching recipe:', error);
+                contentContainer.innerHTML = '<p class="text-red-600">Error loading recipe. Please check your network and server logs.</p>';
+            });
+    </script>
 </body>
 </html>

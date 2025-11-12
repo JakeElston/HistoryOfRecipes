@@ -1,0 +1,41 @@
+:root {
+    /* Main Background & Text Colors */
+    --light-cream: #F5E8D8;
+    --text-black: #1A1A1A;
+
+    /* Primary Branding Colors (from Nav Bar and Buttons) */
+    --primary-brown: #96543C; /* Dark Brown for headers and active buttons */
+    --secondary-brown: #543224; /* Darker Brown for text/titles */
+    --dark-cream: #E8D5C4; /* Button/Search border or hover color */
+}
+
+/* Example usage in CSS based on the design */
+
+body {
+    background-color: var(--light-cream);
+    color: var(--text-black);
+}
+
+.navbar-custom {
+    background-color: var(--primary-brown) !important;
+}
+
+.navbar-custom .nav-link, 
+.navbar-custom .nav-link:focus, 
+.navbar-custom .nav-link:hover {
+    color: var(--light-cream); /* Nav text is light on the dark background */
+}
+
+/* Titles and Links */
+h1, h2, h3, h4, 
+a:not(.nav-link) {
+    color: var(--secondary-brown);
+}
+
+/* Dropdown/Filter Buttons */
+.btn-primary, 
+.dropdown-toggle {
+    background-color: var(--primary-brown);
+    border-color: var(--primary-brown);
+    color: var(--light-cream);
+}

@@ -1,34 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acarajé Essay</title>
-    <link rel="stylesheet" href="../styles.css">
-    <link rel="stylesheet" href="../essaystyles.css">
+    <!-- Use inline CSS for iframe content -->
+    <style>
+        :root {
+            --primary-brown: #6b4e3d;
+            --text-color: #333;
+        }
+        body {
+            font-family: "Inter", sans-serif;
+            color: var(--text-color);
+            line-height: 1.75;
+            padding: 2rem;
+        }
+        .essay-text {
+            margin: 0; 
+        }
+        .essay-text p {
+            margin-bottom: 1rem;
+            text-indent: 1.5rem; /* Standard essay paragraph indent */
+            text-align: justify;
+        }
+    </style>
 </head>
 <body>
-    <p>
-        During my sophomore spring break at Juniata College, I traveled to Salvador da Bahia, Brazil with the concert choir. We gave seven concerts and spent much time with generous and loving host families. Upon returning to my host family’s house one night, we were greeted by a small, impromptu gathering, some champagne, and a sampling of a traditional Bahian food, acarajé.
-    </p>
+    <div id="essay-content" class="essay-text">
+        <p>Loading essay...</p>
+    </div>
 
-    <p>
-        They warned us we could only try one piece of this fried delight. We took the fritter, garnished it with a shrimp, some hot pepper, and vatapá, a creamy paste. It was delicious, and it sparked my curiosity about its story. Acarajé’s historical roots are African, with some Portuguese influences. Its origins trace back to a West African dish called akara that enslaved people brought to Brazil. Over time, it became a defining element of Bahian cuisine.
-    </p>
+    <script>
+        const TARGET_CONTENT_NAME = 'Acarajé'; 
+        const API_BASE_URL = 'http://localhost:5000';
+        const contentContainer = document.getElementById('essay-content');
 
-    <p>
-        The dish traditionally uses black-eyed peas, soaked and hand-peeled, seasoned with salt, and deep-fried in dendê oil (African palm oil). Some recipes add ground shrimp to the batter, while others place a single piece of shrimp in the center. Portuguese influences, such as dried shrimp and onions, and local ingredients like hot peppers and vatapá, complete the dish.
-    </p>
+        function renderEssayContent(essayText) {
+            // Split by double newline to detect paragraphs
+            const paragraphs = essayText.split(/\n\n+/).filter(p => p.trim() !== '');
+            let html = '';
 
-    <p>
-        The preparation of acarajé is closely tied to the Candomblé religion. Practitioners maintain traditional methods and prayers, preserving the dish’s cultural and religious significance. Female vendors, called Baianas, are recognized as the daughters of Iansã, goddess of winds and storms. They wear traditional white dresses and follow divine guidance when choosing their stall sites.
-    </p>
+            paragraphs.forEach(p => {
+                // Join lines within a single paragraph section with a space
+                html += `<p>${p.split('\n').map(line => line.trim()).join(' ')}</p>`;
+            });
+            
+            contentContainer.innerHTML = html;
+        }
 
-    <p>
-        Acarajé has become an emblem of Afro-Brazilian heritage. Sold on the streets of Salvador, it connects modern Brazilians with their African ancestry. Despite modernization and threats to traditional preparation, the essence of acarajé remains preserved through careful adherence to tradition.
-    </p>
-
-    <p>
-        My first attempt to make this cultural dish ended in disaster, with a smoky kitchen, a dirty stove, and a huge oil burn. Yet, the reward for mastering acarajé is delectable. It combines traditional bean flavors with Portuguese touches that make it Bahian today. The dish allows modern children to enjoy the same tastes their ancestors did, preserving a piece of cultural history with every bite.
-    </p>
+        // Fetch ALL essays/recipes from the general endpoint
+        fetch(`${API_BASE_URL}/essays`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Server error when fetching essays.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Find the specific item by checking if the name includes the target name (case insensitive)
+                const primaryContent = data.find(item => item.name && item.name.toLowerCase().includes(TARGET_CONTENT_NAME.toLowerCase()));
+                
+                if (primaryContent) {
+                    renderEssayContent(primaryContent.essay || '');
+                } else {
+                    contentContainer.innerHTML = `<p style="color: red;">Error: Could not find content named "${TARGET_CONTENT_NAME}" in the database.</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching essay:', error);
+                contentContainer.innerHTML = '<p style="color: red;">Error loading essay. Please check your network and server logs.</p>';
+            });
+    </script>
 </body>
 </html>
