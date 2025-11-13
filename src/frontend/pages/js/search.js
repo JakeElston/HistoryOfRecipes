@@ -1,55 +1,49 @@
 // js/search.js
-const recipeContainer = document.getElementById('recipeContainer');
-const searchInput = document.getElementById('searchInput');
-let allRecipes = [];
 
-// Fetch recipes from backend
-async function loadRecipes() {
-    try {
-        const res = await fetch('http://localhost:5000/essays');
-        allRecipes = await res.json();
-        renderRecipes(allRecipes);
-    } catch (err) {
-        console.error('Failed to fetch recipes:', err);
-    }
-}
+const recipeContainer = document.getElementById("recipeContainer");
+const searchInput = document.getElementById("searchInput");
 
-// Render cards
-function renderRecipes(recipes) {
-    recipeContainer.innerHTML = '';
-    recipes.forEach(r => {
-        const col = document.createElement('div');
-        col.className = 'col-lg-4 col-md-6 mb-4';
-        
-        const card = document.createElement('div');
-        card.className = 'recipe-card';
+let recipes = [];
 
-        const title = document.createElement('h3');
-        title.className = 'recipe-title';
-        title.textContent = r.name;
-        title.onclick = () => {
-            localStorage.setItem('selectedRecipe', JSON.stringify(r));
-            window.location.href = 'recipe.html';
-        };
+// Fetch all recipes from backend
+fetch("http://localhost:5000/essays")
+  .then(res => res.json())
+  .then(data => {
+    recipes = data;
+    displayRecipes(data);
+  })
+  .catch(err => {
+    recipeContainer.innerHTML = `<p class="text-danger">Error loading recipes: ${err.message}</p>`;
+  });
 
-        const tags = document.createElement('p');
-        tags.className = 'recipe-tags';
-        tags.textContent = 'Tags: ' + (r.tags || []).join(', ');
-
-        card.appendChild(title);
-        card.appendChild(tags);
-        col.appendChild(card);
-        recipeContainer.appendChild(col);
-    });
-}
-
-// Search functionality
-searchInput.addEventListener('input', () => {
-    const term = searchInput.value.toLowerCase();
-    const filtered = allRecipes.filter(r => r.name.toLowerCase().includes(term) ||
-        (r.tags || []).some(tag => tag.toLowerCase().includes(term))
-    );
-    renderRecipes(filtered);
+// Filter as user types
+searchInput.addEventListener("input", () => {
+  const term = searchInput.value.toLowerCase();
+  const filtered = recipes.filter(r => r.name.toLowerCase().includes(term));
+  displayRecipes(filtered);
 });
 
-document.addEventListener('DOMContentLoaded', loadRecipes);
+// Render recipes
+function displayRecipes(list) {
+  recipeContainer.innerHTML = "";
+  if (list.length === 0) {
+    recipeContainer.innerHTML = "<p class='text-muted'>No recipes found.</p>";
+    return;
+  }
+
+  list.forEach(recipe => {
+    const card = document.createElement("div");
+    card.className = "col-md-6 mb-3";
+
+    card.innerHTML = `
+      <div class="card p-3 shadow-sm">
+        <h3>
+          <a href="recipe.html?name=${encodeURIComponent(recipe.name)}">${recipe.name}</a>
+        </h3>
+        <p class="text-muted small">${recipe.description || ""}</p>
+      </div>
+    `;
+
+    recipeContainer.appendChild(card);
+  });
+}
