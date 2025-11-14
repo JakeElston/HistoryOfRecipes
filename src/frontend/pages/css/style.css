@@ -1,89 +1,114 @@
 :root {
-    --primary-brown: #b8713c;
-    --light-cream: #f5f1eb;
+  --primary-brown: #b8713c;
+  --light-cream: #f5f1eb;
+  --text-brown: #6b4e3d;
 }
 
 body {
-    background-color: var(--light-cream);
-    font-family: 'Georgia', serif;
+  background-color: var(--light-cream);
+  font-family: 'Georgia', serif;
+  margin: 0;
+  padding: 0;
 }
 
+/* ===== Navbar ===== */
 .navbar-custom {
-    background-color: var(--primary-brown);
-    padding: 1.5rem 0;
-    width: 100%;
-}
-
-.navbar-custom .navbar-nav {
-    width: 100%;
-    justify-content: space-evenly;
+  background-color: var(--primary-brown);
+  padding: 1.2rem 0;
 }
 
 .navbar-custom .nav-link {
-    color: white !important;
-    font-size: 1.2rem;
-    font-weight: 400;
-    text-decoration: none;
-    border-bottom: 2px solid transparent;
-    transition: border-bottom 0.3s ease;
-    padding: 0.75rem 2rem;
-    flex: 1;
-    text-align: center;
+  color: white !important;
+  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
 }
 
 .navbar-custom .nav-link:hover,
 .navbar-custom .nav-link.active {
-    border-bottom: 2px solid white;
+  border-bottom: 2px solid white;
 }
 
+/* ===== Page Headings ===== */
 .main-title {
-    color: #6b4e3d;
-    font-size: 3rem;
-    font-weight: normal;
-    text-align: center;
-    margin: 3rem 0;
+  color: var(--text-brown);
+  font-weight: normal;
+  text-align: center;
+  margin-top: 2rem;
 }
 
+/* ===== Search Input ===== */
+.search-input {
+  border: 2px solid var(--primary-brown);
+  border-radius: 25px;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  font-size: 1rem;
+  background-color: white;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-brown);
+}
+
+/* ===== Recipe Cards ===== */
 .recipe-card {
-    background-color: white;
-    border-radius: 10px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
-    height: 100%;
+  background-color: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .recipe-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
 }
-
+/* ===== Recipe Title Styling ===== */
 .recipe-title {
-    color: var(--primary-brown);
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    font-weight: normal;
-    cursor: pointer;
+  color: var(--primary-brown);
+  font-size: 2rem; /* larger */
+
 }
 
-.recipe-tags {
-    font-size: 0.9rem;
-    color: #6b4e3d;
-    margin-top: 0.5rem;
+
+/* ===== Links ===== */
+a {
+  color: var(--primary-brown);
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-.filters-section {
-    margin: 2rem 0;
+a:hover {
+  color: #8c542c;
+  text-decoration: none;
 }
 
-@media (max-width: 768px) {
-    .main-title {
-        font-size: 2rem;
-        margin: 2rem 0;
-    }
-    .navbar-custom .nav-link {
-        margin: 0 0.5rem;
-        font-size: 1rem;
-    }
+/* ===== Buttons ===== */
+.btn-custom {
+  background-color: var(--primary-brown);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
+
+.btn-custom:hover {
+  background-color: #8c542c;
+}
+
+/* ===== Containers ===== */
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding-bottom: 3rem;
+}
+

@@ -1,29 +1,66 @@
-// js/recipe.js
-const recipeTitle = document.getElementById('recipeTitle');
-const recipeTags = document.getElementById('recipeTags');
-const recipeEssay = document.getElementById('recipeEssay');
-const recipeSteps = document.getElementById('recipeSteps');
+// pages/js/recipe.js
+const params = new URLSearchParams(window.location.search);
+const recipeName = params.get("name");
 
-// Load selected recipe from localStorage
-document.addEventListener('DOMContentLoaded', () => {
-    const recipe = JSON.parse(localStorage.getItem('selectedRecipe'));
-    if (!recipe) {
-        recipeTitle.textContent = 'Recipe not found';
+const titleEl = document.getElementById("recipeTitle");
+const tagsEl = document.getElementById("recipeTags");
+const essayEl = document.getElementById("recipeEssay");
+const stepsEl = document.getElementById("recipeSteps");
+const errorEl = document.getElementById("errorMessage");
+
+if (!recipeName) {
+  showError("No recipe name provided.");
+} else {
+  fetch(`http://localhost:5000/essays`)
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to fetch data from backend");
+      return res.json();
+    })
+    .then(data => {
+      const recipe = data.find(
+        item => item.name.toLowerCase().trim() === recipeName.toLowerCase().trim()
+      );
+
+      if (!recipe) {
+        showError("Recipe not found.");
         return;
-    }
+      }
 
-    recipeTitle.textContent = recipe.name;
-    recipeTags.textContent = 'Tags: ' + (recipe.tags || []).join(', ');
+      titleEl.textContent = recipe.name;
+      tagsEl.textContent = recipe.tags || "";
 
-    if (recipe.essay) {
-        const p = document.createElement('p');
-        p.textContent = recipe.essay;
-        recipeEssay.appendChild(p);
-    }
+      // Essay tab
+      essayEl.textContent = recipe.essay || "No essay available.";
 
-    if (recipe.recipe) {
-        const p = document.createElement('p');
-        p.textContent = recipe.recipe;
-        recipeSteps.appendChild(p);
-    }
+      // Recipe tab
+      stepsEl.textContent = recipe.recipie || recipe.recipe || "No recipe steps available.";
+    })
+    .catch(err => {
+      showError("Error fetching recipe data: " + err.message);
+    });
+}
+
+// Tab switching
+const tabEssayBtn = document.getElementById("tabEssayBtn");
+const tabRecipeBtn = document.getElementById("tabRecipeBtn");
+const essayTab = document.getElementById("essayTab");
+const recipeTab = document.getElementById("recipeTab");
+
+tabEssayBtn.addEventListener("click", () => {
+  tabEssayBtn.classList.add("active");
+  tabRecipeBtn.classList.remove("active");
+  essayTab.classList.remove("d-none");
+  recipeTab.classList.add("d-none");
 });
+
+tabRecipeBtn.addEventListener("click", () => {
+  tabRecipeBtn.classList.add("active");
+  tabEssayBtn.classList.remove("active");
+  recipeTab.classList.remove("d-none");
+  essayTab.classList.add("d-none");
+});
+
+function showError(msg) {
+  errorEl.textContent = msg;
+  errorEl.classList.remove("d-none");
+}
