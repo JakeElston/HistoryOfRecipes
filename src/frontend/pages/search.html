@@ -30,25 +30,67 @@
   <div class="container mt-5">
     <h1 class="main-title">Search Recipes</h1>
 
-    <!-- Category Dropdown -->
+    <!-- Category Checkboxes -->
     <div class="row justify-content-center mb-3">
-      <div class="col-md-6">
-        <select id="categorySelect" class="form-select">
-          <option value="">All Categories</option>
-          <option value="Amish/Pennsylvania Dutch">Amish/Pennsylvania Dutch</option>
-          <option value="Latin American">Latin American</option>
-          <option value="French">French</option>
-          <option value="German">German</option>
-          <option value="Eastern European/Russian">Eastern European/Russian</option>
-          <option value="United Kingdom">United Kingdom</option>
-          <option value="Greek">Greek</option>
-          <option value="Jewish">Jewish</option>
-          <option value="Italian">Italian</option>
-          <option value="Middle Eastern/N. African">Middle Eastern/N. African</option>
-          <option value="Asian">Asian</option>
-          <option value="U.S./Southern">U.S./Southern</option>
-          <option value="Other">Other</option>
-        </select>
+      <div class="col-md-10">
+        <div class="category-checkboxes d-flex flex-wrap justify-content-center gap-3" id="categoryCheckboxes">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catAll" value="" checked>
+            <label class="form-check-label" for="catAll">All Categories</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catAmish" value="Amish/Pennsylvania Dutch">
+            <label class="form-check-label" for="catAmish">Amish/Pennsylvania Dutch</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catLatin" value="Latin American">
+            <label class="form-check-label" for="catLatin">Latin American</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catFrench" value="French">
+            <label class="form-check-label" for="catFrench">French</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catGerman" value="German">
+            <label class="form-check-label" for="catGerman">German</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catEastern" value="Eastern European/Russian">
+            <label class="form-check-label" for="catEastern">Eastern European/Russian</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catUK" value="United Kingdom">
+            <label class="form-check-label" for="catUK">United Kingdom</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catGreek" value="Greek">
+            <label class="form-check-label" for="catGreek">Greek</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catJewish" value="Jewish">
+            <label class="form-check-label" for="catJewish">Jewish</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catItalian" value="Italian">
+            <label class="form-check-label" for="catItalian">Italian</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catMiddle" value="Middle Eastern/N. African">
+            <label class="form-check-label" for="catMiddle">Middle Eastern/N. African</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catAsian" value="Asian">
+            <label class="form-check-label" for="catAsian">Asian</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catSouthern" value="U.S./Southern">
+            <label class="form-check-label" for="catSouthern">U.S./Southern</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input category-checkbox" type="checkbox" id="catOther" value="Other">
+            <label class="form-check-label" for="catOther">Other</label>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -56,7 +98,7 @@
     <div class="row justify-content-center mb-4">
       <div class="col-md-6 position-relative">
         <i class="bi bi-search search-icon"></i>
-        <input type="text" id="searchInput" class="form-control search-input" placeholder="Search recipes...">
+        <input type="text" id="searchInput" class="form-control search-input" placeholder="Search recipes by name, author, or content...">
       </div>
     </div>
 
@@ -69,102 +111,14 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <!-- Global function definition for onclick (used by search.js to render cards) -->
   <script>
-    let allRecipes = [];
-    let currentCategory = '';
-
-    // Fetch recipes from backend (with optional category filter)
-    async function fetchRecipes(category = '') {
-      try {
-        const url = category 
-          ? `http://localhost:5000/essays?category=${encodeURIComponent(category)}`
-          : 'http://localhost:5000/essays';
-        
-        console.log('Fetching from:', url);
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('Recipes fetched:', data.length);
-        
-        allRecipes = data;
-        displayRecipes(allRecipes);
-      } catch (error) {
-        console.error('Error fetching recipes:', error);
-        document.getElementById('recipeContainer').innerHTML = 
-          '<div class="col-12"><p class="text-center text-muted">Error loading recipes. Make sure backend is running on http://localhost:5000</p></div>';
-      }
-    }
-
-    // Display recipes
-    function displayRecipes(recipes) {
-      const container = document.getElementById('recipeContainer');
-      
-      if (recipes.length === 0) {
-        container.innerHTML = '<div class="col-12"><p class="text-center text-muted">No recipes found.</p></div>';
-        return;
-      }
-
-      console.log('First recipe author:', recipes[0]?.author); // Debug log
-
-      container.innerHTML = recipes.map(recipe => `
-        <div class="col-md-4 mb-4">
-          <div class="recipe-card h-100" onclick="viewRecipe('${recipe._id}')">
-            <div class="recipe-card-body d-flex flex-column" style="height: 100%;">
-              <h5 class="recipe-title">${recipe.name || 'Untitled'}</h5>
-              <p class="recipe-author">by ${recipe.author || 'Unknown'}</p>
-              <p class="text-muted flex-grow-1" style="overflow: hidden; text-overflow: ellipsis;">${recipe.essay ? recipe.essay.substring(0, 100) + '...' : ''}</p>
-              ${recipe.tags ? `<span class="recipe-tag mt-auto">${recipe.tags}</span>` : ''}
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // Filter recipes by search term (client-side)
-    function filterBySearch() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-
-      if (!searchTerm) {
-        displayRecipes(allRecipes);
-        return;
-      }
-
-      const filtered = allRecipes.filter(recipe =>
-        (recipe.name && recipe.name.toLowerCase().includes(searchTerm)) ||
-        (recipe.author && recipe.author.toLowerCase().includes(searchTerm)) ||
-        (recipe.essay && recipe.essay.toLowerCase().includes(searchTerm))
-      );
-
-      displayRecipes(filtered);
-    }
-
-    // Handle category change (fetches from MongoDB)
-    function handleCategoryChange() {
-      const selectedCategory = document.getElementById('categorySelect').value;
-      currentCategory = selectedCategory;
-      
-      // Clear search input when changing category
-      document.getElementById('searchInput').value = '';
-      
-      // Fetch recipes for selected category from MongoDB
-      fetchRecipes(selectedCategory);
-    }
-
-    // View recipe details
+    // This function must be global to work in the dynamically injected 'onclick' attributes
     function viewRecipe(id) {
-      window.location.href = `recipe-detail.html?id=${id}`;
+      window.location.href = `recipe.html?id=${id}`;
     }
-
-    // Event listeners
-    document.getElementById('searchInput').addEventListener('input', filterBySearch);
-    document.getElementById('categorySelect').addEventListener('change', handleCategoryChange);
-
-    // Load all recipes on page load
-    fetchRecipes();
   </script>
+  <!-- Link to external search logic -->
+  <script src="js/search.js"></script>
 </body>
 </html>
