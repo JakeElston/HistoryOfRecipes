@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const PORT = 5500;
+const PORT = 5000;
 
 // Serve all files in "pages" (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'pages')));

@@ -1,89 +1,91 @@
+// js/recipe.js
 
-const params = new URLSearchParams(window.location.search);
-const recipeId = params.get("id");
+// 1. Get Elements
+const recipeTitle = document.getElementById('recipeTitle');
+const recipeTags = document.getElementById('recipeTags');
+const recipeEssay = document.getElementById('recipeEssay');
+const recipeSteps = document.getElementById('recipeSteps');
 
-const titleEl = document.getElementById("recipeTitle");
-const tagsEl = document.getElementById("recipeTags"); // Correctly named tag element
-const essayEl = document.getElementById("recipeEssay");
-const stepsEl = document.getElementById("recipeSteps");
-const errorEl = document.getElementById("errorMessage");
+// Tab Elements
+const tabEssayBtn = document.getElementById("tabEssayBtn");
+const tabRecipeBtn = document.getElementById("tabRecipeBtn");
+const essayTab = document.getElementById("essayTab");
+const recipeTab = document.getElementById("recipeTab");
 
-// Function to display errors
-function showError(msg) {
-  console.error("RECIPE ERROR:", msg);
-  if (errorEl) {
-      errorEl.textContent = msg;
-      errorEl.classList.remove("d-none");
-  } else {
-      console.error("Error element not found, could not display message:", msg);
-  }
+// 2. Tab Logic
+function setupTabs() {
+    if (!tabEssayBtn || !tabRecipeBtn) return;
+
+    tabEssayBtn.addEventListener("click", () => {
+        tabEssayBtn.classList.add("active", "btn-secondary");
+        tabEssayBtn.classList.remove("btn-outline-secondary");
+        tabRecipeBtn.classList.remove("active", "btn-secondary");
+        tabRecipeBtn.classList.add("btn-outline-secondary");
+        essayTab.classList.remove("d-none");
+        recipeTab.classList.add("d-none");
+    });
+
+    tabRecipeBtn.addEventListener("click", () => {
+        tabRecipeBtn.classList.add("active", "btn-secondary");
+        tabRecipeBtn.classList.remove("btn-outline-secondary");
+        tabEssayBtn.classList.remove("active", "btn-secondary");
+        tabEssayBtn.classList.add("btn-outline-secondary");
+        recipeTab.classList.remove("d-none");
+        essayTab.classList.add("d-none");
+    });
 }
 
-// Function that handles the asynchronous fetching of recipe details
-async function loadAndDisplayRecipe() {
-    if (!recipeId) {
-        showError("No recipe ID provided. Ensure the link from the search page includes a valid '?id=' parameter.");
+// 3. Render Logic
+function renderData(data) {
+    // Title
+    if (recipeTitle) recipeTitle.textContent = data.name;
+
+    // Tags
+    if (recipeTags) recipeTags.textContent = data.tags ? `Tags: ${data.tags}` : 'Tags: None';
+
+    // Essay
+    if (recipeEssay && data.essay) {
+        recipeEssay.innerHTML = `<p>${data.essay}</p>`;
+    }
+
+    // Recipe / Instructions
+    // We check for 'recipie' because that is how it is spelled in your Mongo screenshot
+    const instructions = data.recipie || data.recipe;
+    
+    if (recipeSteps && instructions) {
+        // Replace newlines with breaks so it looks nice
+        recipeSteps.innerHTML = `<p>${instructions.replace(/\n/g, '<br>')}</p>`;
+    } else if (recipeSteps) {
+        recipeSteps.innerHTML = "<p>No instructions found.</p>";
+    }
+}
+
+// 4. Main Execution
+document.addEventListener('DOMContentLoaded', async () => {
+    setupTabs();
+
+    // Get ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+
+    if (!id) {
+        if (recipeTitle) recipeTitle.textContent = "No ID provided in URL";
         return;
     }
 
     try {
-        const url = `http://localhost:5000/essays/${recipeId}`;
-        
-        console.log('Fetching recipe from:', url);
-        const res = await fetch(url);
+        const response = await fetch(`http://localhost:5000/essays/${id}`);
 
-        if (res.status === 404) {
-             throw new Error("Recipe not found. Check the ID.");
+        if (!response.ok) {
+            throw new Error(`Server responded with ${response.status}`);
         }
-        if (!res.ok) {
-            throw new Error(`Failed to fetch recipe: HTTP status ${res.status}`);
-        }
-        
-        const recipe = await res.json();
-        
-        // Populate elements
-        if (titleEl) titleEl.textContent = recipe.name || "Untitled Recipe";
-        if (tagsEl) tagsEl.textContent = recipe.tags || ""; // FIX: Changed tagsL to tagsEl
 
-        // Essay tab
-        if (essayEl) essayEl.textContent = recipe.essay || "No essay available.";
+        const data = await response.json();
+        console.log("Data received from DB:", data); // Check your browser console for this!
+        renderData(data);
 
-        // Recipe tab
-        if (stepsEl) stepsEl.textContent = recipe.recipie || recipe.recipe || "No recipe steps available.";
-
-    } catch (err) {
-        showError(`Error loading recipe data: ${err.message}. Ensure your front-end is served via a local HTTP server (e.g., http://localhost:8000) and the backend is running at http://localhost:5000.`);
+    } catch (error) {
+        console.error("Fetch error:", error);
+        if (recipeTitle) recipeTitle.textContent = "Error loading data. Check Console (F12).";
     }
-}
-
-
-// --- Tab switching logic ---
-function setupTabSwitching() {
-    const tabEssayBtn = document.getElementById("tabEssayBtn");
-    const tabRecipeBtn = document.getElementById("tabRecipeBtn");
-    const essayTab = document.getElementById("essayTab");
-    const recipeTab = document.getElementById("recipeTab");
-
-    if (tabEssayBtn && tabRecipeBtn && essayTab && recipeTab) {
-        tabEssayBtn.addEventListener("click", () => {
-          tabEssayBtn.classList.add("active");
-          tabRecipeBtn.classList.remove("active");
-          essayTab.classList.remove("d-none");
-          recipeTab.classList.add("d-none");
-        });
-
-        tabRecipeBtn.addEventListener("click", () => {
-          tabRecipeBtn.classList.add("active");
-          tabEssayBtn.classList.remove("active");
-          recipeTab.classList.remove("d-none");
-          essayTab.classList.add("d-none");
-        });
-    }
-}
-
-
-// Initial load and setup, running once the HTML is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    loadAndDisplayRecipe();
-    setupTabSwitching();
 });
