@@ -5,6 +5,7 @@ const recipeTitle = document.getElementById('recipeTitle');
 const recipeTags = document.getElementById('recipeTags');
 const recipeEssay = document.getElementById('recipeEssay');
 const recipeSteps = document.getElementById('recipeSteps');
+const recipeAuthor = document.getElementById('recipeAuthor');
 
 // Tab Elements
 const tabEssayBtn = document.getElementById("tabEssayBtn");
@@ -39,6 +40,8 @@ function setupTabs() {
 function renderData(data) {
     // Title
     if (recipeTitle) recipeTitle.textContent = data.name;
+
+    if (recipeAuthor) recipeAuthor.textContent = data.author ? `by ${data.author}` : 'by Unknown';
 
     // Tags
     if (recipeTags) recipeTags.textContent = data.tags ? `Tags: ${data.tags}` : 'Tags: None';
